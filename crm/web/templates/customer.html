@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<div class="card">
+  <div class="card-header"><strong>
+    	{{ customer_rec.f_name }} 
+		{{ customer_rec.l_name }}</strong>
+  </div>
+  <div class="card-body">
+<p class="card-text">
+<strong>Phone: </strong>{{ customer_rec.phone_no }}
+</p>
+
+<p class="card-text">
+<strong>Created At: </strong>{{ customer_rec.created_at }}</p>
+
+<br><br>
+{% if sales %}
+    <div class="card">
+        <div class="card-header">
+            <strong>Total Spend</strong>
+        </div>
+    <div class="card-body">
+        <p class="card-text">
+        <strong>Sales: </strong>{{ tot_sale }}</p>
+{% endif %}
+ 
+</div>
+</div>
+<br>
+<div class="card">
+    <div class="card-header">
+        <strong>Sales</strong>
+    </div>
+<div class="card-body">
+
+  {% if sales %}
+
+    {% for sale in sales %}
+
+        <p class="card-text">
+        <strong>Price: </strong>{{ sale.price }}</p>
+
+        <p class="card-text">
+        <strong>Date: </strong>{{ sale.date }}</p>
+        
+        <p>------------------------------</p>
+
+    {% endfor %}
+  {% else %}
+  <p class="card-text">No Sales Yet!</p>
+
+  {% endif %}
+
+
+  </div>
+</div>
+
+<br/><br/>
+{% for customer in customer_r %}
+
+<a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
+
+<a href="{% url 'update' customer.phone_no %}" class="btn btn-secondary">Update Record</a>
+
+<a href="{% url 'delete' customer.phone_no %}" class="btn btn-danger">Delete</a>
+
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<table class="table table-striped table-hover table-bordered">
+  <thead class="table-dark">
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Phone</th>
+      <th scope="col">Created At</th>
+
+    </tr>
+  </thead>
+  <tbody>
+    
+	{% for data in customer_record %}
+		<tr>
+			<td>{{ data.f_name }} {{ data.l_name }}</td>
+			<td><a href="{% url 'customer' data.phone_no %}">{{ data.phone_no }}</a></td>
+			<td>{{ data.created_at }}</td>
+		</tr>
+	{% endfor %}
+
+	
+	  </tbody>
+	</table>
+
+{% endblock %}

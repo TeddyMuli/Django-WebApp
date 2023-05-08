@@ -67,11 +67,22 @@ def customer(request, customer):
         customer_r = Record.objects.filter(phone_no = customer)
         sales = Sale.objects.filter(client = customer).order_by('-date')
         customer_rec = Record.objects.get(phone_no = customer)
-        tot_sale = Sale.objects.all().aggregate(Sum('price'))
+        tot_price = Sale.objects.all().aggregate(Sum('price'))  
+        tot_paid = Sale.objects.all().aggregate(total=Sum('paid'))
+        total = tot_paid['total']
+
+        
+        tot_debt = 0
+        for i in sales:
+            tot_debt += i.debt
+
         context = {
             'customer_rec':customer_rec,
             'sales':sales,
-            'tot_sale':tot_sale
+            #total paid
+            'total' : total,
+            'tot_price':tot_price,
+            'tot_debt' : tot_debt,
         }
         return render(request, 'customer.html', context)
     else:

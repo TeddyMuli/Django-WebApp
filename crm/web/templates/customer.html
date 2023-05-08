@@ -20,11 +20,15 @@
 {% if sales %}
     <div class="card">
         <div class="card-header">
-            <strong>Total Spend</strong>
+            <strong>Customer Spend</strong>
         </div>
     <div class="card-body">
         <p class="card-text">
-        <strong>Sales: </strong>{{ tot_sale }}</p>
+        <strong>Total Paid: </strong>{{ total }}</p>
+
+      <p class="card-text">
+      <strong>Total Debt: </strong>{{ tot_debt }}</p>
+    
 {% endif %}
  
 </div>

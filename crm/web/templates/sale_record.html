@@ -8,7 +8,10 @@
       <th scope="col">First Name</th>
       <th scope="col">Client</th>
       <th scope="col">Date</th>
-      <th scope="col">Sale</th>
+      <th scope="col">Price</th>
+      <th scope="col">Paid</th>
+      <th scope="col">Less Paid</th>
+
 
     </tr>
   </thead>
@@ -19,7 +22,9 @@
 			<td>{{ data.f_name }}</td>
 			<td>{{ data.client }}</td>
 			<td>{{ data.date }}</td>
-            <td>{{ data.price }}</td>
+      <td>{{ data.price }}</td>
+      <td>{{ data.paid }}</td>
+      <td>{{ data.debt }}</td>
       
 		</tr>
 	{% endfor %}

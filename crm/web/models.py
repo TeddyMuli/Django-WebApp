@@ -15,5 +15,12 @@ class Sale(models.Model):
     client = models.ForeignKey(Record, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
     price = models.IntegerField()
+    paid = models.IntegerField()
+
+    @property
+    def debt(self):
+        debt = int(self.price - self.paid)
+        return debt
+    
     def __str__(self):
         return self.price

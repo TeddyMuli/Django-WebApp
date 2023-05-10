@@ -2,6 +2,15 @@
 
 {% block content %}
 
+{% for customer in customer_r %}
+<a href="{% url 'customer_record' %}" class="btn btn-primary">Back</a>
+
+<a href="{% url 'update' customer.phone_no %}" class="btn btn-primary">Update Record</a>
+
+<a href="{% url 'delete' customer.phone_no %}" class="btn btn-danger">Delete</a>
+{% endfor %}
+
+<br><br>
 
 <div class="card">
   <div class="card-header"><strong>
@@ -22,10 +31,10 @@
         <div class="card-header">
             <strong>Customer Spend</strong>
         </div>
-    <div class="card-body">
+    
+      <div class="card-body">
         <p class="card-text">
         <strong>Total Paid: </strong>{{ total }}</p>
-
       <p class="card-text">
       <strong>Total Debt: </strong>{{ tot_debt }}</p>
     
@@ -63,13 +72,4 @@
 </div>
 
 <br/><br/>
-{% for customer in customer_r %}
-
-<a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
-
-<a href="{% url 'update' customer.phone_no %}" class="btn btn-secondary">Update Record</a>
-
-<a href="{% url 'delete' customer.phone_no %}" class="btn btn-danger">Delete</a>
-
-{% endfor %}
 {% endblock %}

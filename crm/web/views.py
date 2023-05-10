@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
-from .models import Record, Sale
+from .models import Record, Sale, Route, Product
 from .forms import RecordForm, SaleForm, SignUpForm
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Sum
@@ -38,7 +39,10 @@ def customer_record(request):
 def sale_record(request):
     if request.user.is_authenticated:
         sale_record = Sale.objects.all().order_by('-date')
-        return render(request, 'sale_record.html', {'sale_record':sale_record})
+        context = {
+        'sale_record':sale_record,
+        }
+        return render(request, 'sale_record.html', context)
     else:
         messages.success(request, "You have to be logged in!")
 
@@ -67,8 +71,8 @@ def customer(request, customer):
         customer_r = Record.objects.filter(phone_no = customer)
         sales = Sale.objects.filter(client = customer).order_by('-date')
         customer_rec = Record.objects.get(phone_no = customer)
-        tot_price = Sale.objects.all().aggregate(Sum('price'))  
-        tot_paid = Sale.objects.all().aggregate(total=Sum('paid'))
+        tot_price = Sale.objects.all().aggregate(Sum('price'))
+        tot_paid = Sale.objects.filter(client = customer).aggregate(total=Sum('paid'))
         total = tot_paid['total']
 
         
@@ -77,12 +81,13 @@ def customer(request, customer):
             tot_debt += i.debt
 
         context = {
-            'customer_rec':customer_rec,
-            'sales':sales,
+            'customer_rec': customer_rec,
+            'sales': sales,
             #total paid
             'total' : total,
-            'tot_price':tot_price,
+            'tot_price': tot_price,
             'tot_debt' : tot_debt,
+            'customer_r' : customer_r,
         }
         return render(request, 'customer.html', context)
     else:
@@ -97,9 +102,9 @@ def delete_record(request, customer):
         delete_c.delete()
         delete_s.delete()
         messages.success(request, "Record Deleted Successfully...")
-        return redirect('home')
+        return redirect('customer_record')
     else:
-        messages.success(request, "You Must Be Logged In To Do That...")
+        messages.success(request, "You Must Be Logged In To Delete...")
         return redirect('home')
      
       
@@ -115,35 +120,37 @@ def update(request, customer):
             return redirect('customer_record')
         return render(request, 'update.html', {'form':form})
     else:
-        messages.success(request, "You Must Be Logged In...")
+        messages.success(request, "You Must Be Logged In To Update...")
         return redirect('home')
-
-
+@login_required
 def cust_entry(request):
     form = RecordForm(request.POST or None)
     if request.user.is_authenticated:
         if request.method == "POST":
             if form.is_valid():
+                record = form.save(commit=False)
+                record.user = request.user
+                record.save()
                 cust_entry = form.save()
                 messages.success(request, "Record Added...")
-                return redirect('home')
-        return render(request, 'cust_entry.html', {'form':form})
+                return redirect('customer_record')
+        return render(request, 'cust_entry.html', {'form':form, 'record' : record})
     else:
         messages.success(request, "You Must Be Logged In...")
         return redirect('home')
-
-
 
 def sale_entry(request):
     form = SaleForm(request.POST or None)
     if request.user.is_authenticated:
         if request.method == "POST":
             if form.is_valid():
+                record = form.save(commit=False)
+                record.served_by = request.user
+                record.save()
                 sale_entry = form.save()
                 messages.success(request, "Record Added...")
-                return redirect('home')
-        return render(request, 'sale.html', {'form':form})
+                return redirect('sale_record')
+        return render(request, 'sale.html', {'form':form, 'record' : record})
     else:
         messages.success(request, "You Must Be Logged In...")
         return redirect('home')
-

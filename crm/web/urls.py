@@ -9,8 +9,11 @@ urlpatterns = [
    path('cust_entry/', views.cust_entry, name='cust_entry'),
    path('sale_entry/', views.sale_entry, name='sale_entry'),
    path('customer_record/', views.customer_record, name='customer_record'),
-   path('sale_record/', views.sale_record, name="sale_record"),
+   path('sale_record/', views.sale_record, name='sale_record'),
    path('customer/<customer>', views.customer, name="customer"),
    path('delete/<customer>', views.delete_record, name="delete"),
    path('update/<customer>', views.update, name="update"),
+   #path('employee/', views.employee, name='employee'),
+   #path('route', views.route, name="route"),
+
 ]

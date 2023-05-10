@@ -11,7 +11,7 @@
       <th scope="col">Price</th>
       <th scope="col">Paid</th>
       <th scope="col">Less Paid</th>
-
+      <th scope="col">Served By</th>
 
     </tr>
   </thead>
@@ -25,12 +25,12 @@
       <td>{{ data.price }}</td>
       <td>{{ data.paid }}</td>
       <td>{{ data.debt }}</td>
-      
-		</tr>
+      <td>{{ data.served_by.username }}</td>
+    </tr>
+
 	{% endfor %}
 
-	
-	  </tbody>
+	</tbody>
 	</table>
 
 {% endblock %}

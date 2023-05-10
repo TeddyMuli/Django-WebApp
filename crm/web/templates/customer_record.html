@@ -8,6 +8,8 @@
       <th scope="col">Name</th>
       <th scope="col">Phone</th>
       <th scope="col">Created At</th>
+	  <th scope="col">Route</th>
+      <th scope="col">Attendant</th>
 
     </tr>
   </thead>
@@ -18,7 +20,10 @@
 			<td>{{ data.f_name }} {{ data.l_name }}</td>
 			<td><a href="{% url 'customer' data.phone_no %}">{{ data.phone_no }}</a></td>
 			<td>{{ data.created_at }}</td>
+			<td>{{ data.route }}</td>
+			<td>{{ data.user.username }}</td>
 		</tr>
+
 	{% endfor %}
 
 	

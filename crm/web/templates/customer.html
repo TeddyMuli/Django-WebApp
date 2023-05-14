@@ -52,12 +52,24 @@
   {% if sales %}
 
     {% for sale in sales %}
-
+    <p class="card-text">
+      <strong>Product: </strong>{{ sale.product }}</p>
+      <p class="card-text">
+        <strong>Quantity: </strong>{{ sale.quantity }}</p>
+  
         <p class="card-text">
-        <strong>Price: </strong>{{ sale.price }}</p>
-
+        <strong>Cost: </strong>{{ sale.price }}</p>
+        <p class="card-text">
+          <strong>Paid: </strong>{{ sale.paid }}</p>
+          <p class="card-text">
+            <strong>Less Paid: </strong>{{ sale.debt }}</p>
+  
         <p class="card-text">
         <strong>Date: </strong>{{ sale.date }}</p>
+
+        <p class="card-text">
+          <strong>Served By: </strong>{{ sale.served_by.username }}</p>
+  
         
         <p>------------------------------</p>
 

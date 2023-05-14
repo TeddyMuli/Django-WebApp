@@ -5,10 +5,11 @@
 <table class="table table-striped table-hover table-bordered">
   <thead class="table-dark">
     <tr>
-      <th scope="col">First Name</th>
       <th scope="col">Client</th>
       <th scope="col">Date</th>
-      <th scope="col">Price</th>
+      <th scope="col">Product</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Cost</th>
       <th scope="col">Paid</th>
       <th scope="col">Less Paid</th>
       <th scope="col">Served By</th>
@@ -19,9 +20,10 @@
     
 	{% for data in sale_record %}
 		<tr>
-			<td>{{ data.f_name }}</td>
 			<td>{{ data.client }}</td>
 			<td>{{ data.date }}</td>
+      <td>{{ data.product }}</td>
+      <td>{{ data.quantity }}</td>
       <td>{{ data.price }}</td>
       <td>{{ data.paid }}</td>
       <td>{{ data.debt }}</td>

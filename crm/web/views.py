@@ -71,11 +71,8 @@ def customer(request, customer):
         customer_r = Record.objects.filter(phone_no = customer)
         sales = Sale.objects.filter(client = customer).order_by('-date')
         customer_rec = Record.objects.get(phone_no = customer)
-        tot_price = Sale.objects.all().aggregate(Sum('price'))
         tot_paid = Sale.objects.filter(client = customer).aggregate(total=Sum('paid'))
         total = tot_paid['total']
-
-        
         tot_debt = 0
         for i in sales:
             tot_debt += i.debt
@@ -85,7 +82,6 @@ def customer(request, customer):
             'sales': sales,
             #total paid
             'total' : total,
-            'tot_price': tot_price,
             'tot_debt' : tot_debt,
             'customer_r' : customer_r,
         }
@@ -122,6 +118,7 @@ def update(request, customer):
     else:
         messages.success(request, "You Must Be Logged In To Update...")
         return redirect('home')
+    
 @login_required
 def cust_entry(request):
     form = RecordForm(request.POST or None)
@@ -134,23 +131,24 @@ def cust_entry(request):
                 cust_entry = form.save()
                 messages.success(request, "Record Added...")
                 return redirect('customer_record')
-        return render(request, 'cust_entry.html', {'form':form, 'record' : record})
+        return render(request, 'cust_entry.html', {'form':form})
     else:
         messages.success(request, "You Must Be Logged In...")
         return redirect('home')
 
+@login_required
 def sale_entry(request):
     form = SaleForm(request.POST or None)
     if request.user.is_authenticated:
         if request.method == "POST":
             if form.is_valid():
-                record = form.save(commit=False)
-                record.served_by = request.user
-                record.save()
+                sale = form.save(commit=False)
+                sale.served_by = request.user
+                sale.save()
                 sale_entry = form.save()
                 messages.success(request, "Record Added...")
                 return redirect('sale_record')
-        return render(request, 'sale.html', {'form':form, 'record' : record})
+        return render(request, 'sale.html', {'form':form})
     else:
         messages.success(request, "You Must Be Logged In...")
         return redirect('home')

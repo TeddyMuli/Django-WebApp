@@ -13,15 +13,12 @@ class RecordForm(forms.ModelForm):
 
 
 class SaleForm(forms.ModelForm):
-    f_name = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"First Name", "class":"form-control"}), label="")
-    #phone_no = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Phone Number", "class":"form-control"}), label="")
-    #client = forms.ChoiceField(required=True, widget=forms.widgets.ChoiceWidget(), label="")
-    price = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Price", "class":"form-control"}), label="")
+    quantity = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Quantity", "class":"form-control"}), label="")
     paid = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Paid", "class":"form-control"}), label="")
 
     class Meta:
         model = Sale
-        exclude = ("user", )
+        exclude = ("served_by", )
 
 
 class SignUpForm(UserCreationForm):

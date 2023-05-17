@@ -13,7 +13,5 @@ urlpatterns = [
    path('customer/<customer>', views.customer, name="customer"),
    path('delete/<customer>', views.delete_record, name="delete"),
    path('update/<customer>', views.update, name="update"),
-   #path('employee/', views.employee, name='employee'),
-   #path('route', views.route, name="route"),
-
+   path('pay_debt/<customer>/', views.debt, name='pay_debt'),
 ]

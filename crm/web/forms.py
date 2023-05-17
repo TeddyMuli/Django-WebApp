@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Record, Sale
+from .models import Record, Sale, Debt
 
 class RecordForm(forms.ModelForm):
     f_name = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"First Name", "class":"form-control"}), label="")
@@ -20,7 +20,12 @@ class SaleForm(forms.ModelForm):
         model = Sale
         exclude = ("served_by", )
 
-
+class DebtForm(forms.ModelForm):
+    paid = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Pay Debt", "class":"form-control"}), label="")
+    class Meta:
+         model = Debt
+         exclude = ('client',)
+         
 class SignUpForm(UserCreationForm):
 	first_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'First Name'}))
 	last_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Last Name'}))

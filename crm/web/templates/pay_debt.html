@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="col-md-6 offset-md-3">
+<h2>Pay Debt</h2>
+<p class="card-text"><strong>Customer Name</strong>: {{ customer_rec.f_name }} {{ customer_rec.l_name }}</p>
+<p class="card-text"><strong>Debt Amount</strong>: {{ tot_debt }}</p>
+
+<form method="POST" action="{% url 'pay_debt' customer_rec.phone_no %}">
+  {% csrf_token %}
+
+  {{ debt_form.as_p }}
+
+  <br/>
+  <a href="{% url 'customer' customer_rec.phone_no %}" class="btn btn-secondary">Back</a>
+
+  <button type="submit" class="btn btn-secondary">Record Payment</button>
+
+</form>
+</div>
+{% endblock %}

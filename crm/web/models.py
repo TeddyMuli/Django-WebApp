@@ -37,6 +37,7 @@ class Sale(models.Model):
     served_by = models.ForeignKey(User, on_delete=models.CASCADE)
     quantity = models.IntegerField()
     paid = models.IntegerField()
+    paid_debt = models.IntegerField()
     pay = models.CharField(max_length=10,choices=PAY)
 
     @property
@@ -48,7 +49,13 @@ class Sale(models.Model):
     def debt(self):
         debt = int(self.price - self.paid)
         return debt
-    
+
     def __str__(self):
         return f"{self.client}"
 
+class Debt(models.Model):
+    client = models.ForeignKey(Record, on_delete=models.CASCADE)
+    paid = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.client}"

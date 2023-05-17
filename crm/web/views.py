@@ -1,6 +1,8 @@
-from django.shortcuts import render, redirect
-from .models import Record, Sale, Route, Product
-from .forms import RecordForm, SaleForm, SignUpForm
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
+from django_daraja.mpesa.core import MpesaClient
+from .models import Record, Sale, Route, Product, Debt
+from .forms import RecordForm, SaleForm, SignUpForm, DebtForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -77,6 +79,13 @@ def customer(request, customer):
         for i in sales:
             tot_debt += i.debt
 
+        debt_payments = Debt.objects.filter(client=customer_rec)
+        for payment in debt_payments:
+            tot_debt -= payment.paid
+    
+
+        total += debt_payments.aggregate(total=Sum('paid'))['total']
+
         context = {
             'customer_rec': customer_rec,
             'sales': sales,
@@ -92,6 +101,7 @@ def customer(request, customer):
 
 def delete_record(request, customer):
     customer = customer
+
     if request.user.is_authenticated:
         delete_c = Record.objects.filter(phone_no = customer)
         delete_s = Sale.objects.filter(client = customer)
@@ -102,8 +112,6 @@ def delete_record(request, customer):
     else:
         messages.success(request, "You Must Be Logged In To Delete...")
         return redirect('home')
-     
-      
 
 def update(request, customer):
     #customer = customer
@@ -135,6 +143,7 @@ def cust_entry(request):
     else:
         messages.success(request, "You Must Be Logged In...")
         return redirect('home')
+    
 
 @login_required
 def sale_entry(request):
@@ -152,3 +161,40 @@ def sale_entry(request):
     else:
         messages.success(request, "You Must Be Logged In...")
         return redirect('home')
+
+@login_required
+def debt(request, customer):
+    customer = customer
+    if request.user.is_authenticated:
+        debt_form = DebtForm(request.POST or None)
+        customer_r = Record.objects.filter(phone_no = customer)
+        sales = Sale.objects.filter(client = customer).order_by('-date')
+        customer_rec = Record.objects.get(phone_no = customer)
+        debt = Debt.objects.filter(client = customer)
+                
+        if request.method == "POST":
+            if debt_form.is_valid():
+                debt = debt_form.save(commit=False)
+                debt.client = customer_rec
+                debt_form.save()
+                messages.success(request, "Payment Recorded")
+                return redirect('customer', customer=customer_rec.phone_no)
+
+        tot_debt = 0
+        for i in sales:
+            tot_debt += i.debt
+
+        for j in debt:
+            tot_debt = tot_debt - j.paid
+
+        context = {
+            'customer_rec': customer_rec,
+            'sales': sales,
+            #total paid
+            'tot_debt' : tot_debt,
+            'customer_r' : customer_r,
+            'debt_form' : debt_form,
+        }
+        return render(request, 'pay_debt.html', context)
+    else:
+        messages.success(request, "You have to be logged in!")

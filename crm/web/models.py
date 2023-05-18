@@ -16,11 +16,11 @@ class Product(models.Model):
     
 class Record(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    route = models.ForeignKey(Route, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     f_name = models.CharField(max_length=50)
     l_name = models.CharField(max_length=50)
     phone_no = models.CharField(max_length=10, unique=True, db_index=True, primary_key=True)
+    route = models.ForeignKey(Route, on_delete=models.CASCADE)
     image = models.ImageField(null=True, blank=True, upload_to="images/")
     def __str__(self):
         return f"{self.f_name} {self.l_name}"
@@ -37,7 +37,6 @@ class Sale(models.Model):
     served_by = models.ForeignKey(User, on_delete=models.CASCADE)
     quantity = models.IntegerField()
     paid = models.IntegerField()
-    paid_debt = models.IntegerField()
     pay = models.CharField(max_length=10,choices=PAY)
 
     @property

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1><strong>Debt Payment</strong></h1>
+<table class="table table-striped table-hover table-bordered">
+    <thead class="table-dark">
+      <tr>
+        <th scope="col">Client</th>
+        <th scope="col">Date</th>
+        <th scope="col">Paid</th>
+        <th scope="col">Served By</th>
+      </tr>
+    </thead>
+    <tbody>
+    
+    {% for data in debt_record %}
+
+    <tr>
+        <td>{{ data.client }}</td>
+        <td>{{ data.date }}</td>
+        <td>{{ data.paid }}</td>
+        <td>{{ data.user.username }}</td>
+    </tr>
+
+    {% endfor %}
+    
+    </tbody>
+    </table>
+{% endblock %}

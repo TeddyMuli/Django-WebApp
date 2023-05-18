@@ -82,10 +82,10 @@ def customer(request, customer):
         debt_payments = Debt.objects.filter(client=customer_rec)
         for payment in debt_payments:
             tot_debt -= payment.paid
-    
 
-        total += debt_payments.aggregate(total=Sum('paid'))['total']
-
+        payment_total = debt_payments.aggregate(total=Sum('paid'))['total']
+        if payment_total is not None:
+            total += payment_total
         context = {
             'customer_rec': customer_rec,
             'sales': sales,
@@ -176,6 +176,9 @@ def debt(request, customer):
             if debt_form.is_valid():
                 debt = debt_form.save(commit=False)
                 debt.client = customer_rec
+                user_r = debt_form.save(commit=False)
+                user_r.user = request.user
+                user_r.save()
                 debt_form.save()
                 messages.success(request, "Payment Recorded")
                 return redirect('customer', customer=customer_rec.phone_no)
@@ -190,6 +193,7 @@ def debt(request, customer):
         context = {
             'customer_rec': customer_rec,
             'sales': sales,
+            'user_r':user_r,
             #total paid
             'tot_debt' : tot_debt,
             'customer_r' : customer_r,
@@ -198,3 +202,15 @@ def debt(request, customer):
         return render(request, 'pay_debt.html', context)
     else:
         messages.success(request, "You have to be logged in!")
+
+@login_required
+def debt_record(request):
+    if request.user.is_authenticated:
+        debt_record = Debt.objects.all().order_by('-date')
+        context = {
+        'debt_record':debt_record,
+        }
+        return render(request, 'debt_record.html', context)
+    else:
+        messages.success(request, "You have to be logged in!")
+

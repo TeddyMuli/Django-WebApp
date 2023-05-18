@@ -55,7 +55,9 @@ class Sale(models.Model):
 
 class Debt(models.Model):
     client = models.ForeignKey(Record, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)
     paid = models.IntegerField(default=0)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.client}"

@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django_daraja.mpesa.core import MpesaClient
-from .models import Record, Sale, Route, Product, Debt
-from .forms import RecordForm, SaleForm, SignUpForm, DebtForm
+from .models import Record, Sale, Route, Product, Debt, Expense
+from .forms import RecordForm, SaleForm, SignUpForm, DebtForm, ExpenseForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Sum
+import datetime, calendar
 
 def home(request):
     records = Record.objects.all()
@@ -214,3 +215,67 @@ def debt_record(request):
     else:
         messages.success(request, "You have to be logged in!")
 
+@login_required
+def financials(request):
+    time_frame = request.GET.get('time_frame', 'month')
+    start_date = None
+    end_date = None
+
+    today = datetime.date.today()
+    if time_frame == 'month':
+        start_date = today.replace(day=1)
+        end_date = today.replace(day=calendar.monthrange(today.year, today.month)[1])
+    elif time_frame == 'quarter':
+        quarter_start = (today.month - 1) // 3 * 3 + 1
+        start_date = today.replace(month=quarter_start, day=1)
+        end_date = today.replace(month=quarter_start + 2, day=calendar.monthrange(today.year, quarter_start + 2)[1])
+    elif time_frame == 'year':
+        start_date = today.replace(month=1, day=1)
+        end_date = today.replace(month=12, day=31)
+
+    sales_amount = Sale.objects.filter(date__range=(start_date, end_date)).aggregate(total=Sum('paid'))['total']
+    sales_amount = sales_amount or 0
+
+    debt_paid = Debt.objects.filter(date__range=(start_date, end_date)).aggregate(total=Sum('paid'))['total']
+    debt_paid = debt_paid or 0
+
+    expense_total = Expense.objects.filter(date__range=(start_date, end_date)).aggregate(total=Sum('amount'))['total']
+    expense_total = expense_total or 0
+
+
+    revenue = sales_amount + debt_paid
+
+    profit = revenue - expense_total
+    
+    return render(request, 'financials.html', {
+        'time_frame': time_frame,
+        'sales_amount': sales_amount,
+        'debt_paid': debt_paid,
+        'revenue':revenue,
+    })
+
+
+def expense(request):
+    form = ExpenseForm(request.POST or None)
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            if form.is_valid():
+                user_r = form.save(commit=False)
+                user_r.user = request.user
+                user_r.save()
+                form.save()
+                messages.success(request, "Record Added...")
+                return redirect('expense')
+        return render(request, 'expense.html', {'form':form})
+    else:
+        messages.success(request, "You Must Be Logged In...")
+        return redirect('home')
+    
+def expense_record(request):
+    if request.user.is_authenticated:
+        expenses = Expense.objects.all().order_by('-date')
+        return render(request, 'expense_record.html', {'expenses':expenses})
+    else:
+        messages.success(request, "You Must Be Logged In!")
+        return redirect('home')
+    

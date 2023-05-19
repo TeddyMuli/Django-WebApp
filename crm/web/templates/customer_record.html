@@ -19,7 +19,7 @@
 		<tr>
 			<td>{{ data.f_name }} {{ data.l_name }}</td>
 			<td><a href="{% url 'customer' data.phone_no %}">{{ data.phone_no }}</a></td>
-			<td>{{ data.created_at }}</td>
+			<td>{{ data.created_at|date:"d-m-Y" }}</td>
 			<td>{{ data.route }}</td>
 			<td>{{ data.user.username }}</td>
 		</tr>

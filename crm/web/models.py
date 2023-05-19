@@ -60,3 +60,13 @@ class Debt(models.Model):
 
     def __str__(self):
         return f"{self.client}"
+    
+
+class Expense(models.Model):
+    name = models.CharField(max_length=100)
+    amount = models.IntegerField()
+    date = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.name} {self.amount}"

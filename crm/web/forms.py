@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Record, Sale, Debt, Route, Product
+from .models import Record, Sale, Debt, Route, Product, Expense
 
 class RecordForm(forms.ModelForm):
     f_name = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"First Name", "class":"form-control"}), label="")
@@ -43,14 +43,9 @@ class SaleForm(forms.ModelForm):
         self.fields['product'].label = False
 		#Pay
 		
-        pays = Sale.objects.values_list('id', 'pay')
+        pays = Sale.objects.order_by('pay').values_list('pay', 'pay').distinct()
         self.fields['pay'].label = False
         self.fields['pay'].choices = [('', 'Payment Method')] + list(pays)
-
-
-        
-
-
 
     class Meta:
         model = Sale
@@ -61,6 +56,15 @@ class DebtForm(forms.ModelForm):
     class Meta:
          model = Debt
          exclude = ('client',)
+
+
+class ExpenseForm(forms.ModelForm):
+     name = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Name", "class":"form-control"}), label="")
+     amount = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Amount", "class":"form-control"}), label="")
+
+     class Meta:
+          model = Expense
+          exclude = ('user',)
          
 class SignUpForm(UserCreationForm):
 	first_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'First Name'}))

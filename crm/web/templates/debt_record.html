@@ -16,7 +16,7 @@
 
     <tr>
         <td>{{ data.client }}</td>
-        <td>{{ data.date }}</td>
+        <td>{{ data.date|date:"d-m-Y"}}</td>
         <td>{{ data.paid }}</td>
         <td>{{ data.user.username }}</td>
     </tr>

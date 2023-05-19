@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Financials</h1>
+<form method="get" action="{% url 'financials' %}">
+   <select name="time_frame">
+       <option value="month">Monthly</option>
+       <option value="quarter">Quarterly</option>
+       <option value="year">Yearly</option>
+   </select>
+   <button type="submit">Go</button>
+</form>
+
+<h2>Total Sales Amount: ${{ sales_amount }}</h2>
+<h2>Total Debt Paid: ${{ debt_paid }}</h2>
+<h2>Revenue: ${{ revenue }}</h2>
+<h2>Expenses: ${{ expense_total }}</h2>
+<h2>Total Profit: ${{ profit }}</h2>
+{% endblock %}

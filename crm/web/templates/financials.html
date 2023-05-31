@@ -1,18 +1,72 @@
 {% extends 'base.html' %}
+
 {% block content %}
+
 <h1>Financials</h1>
 <form method="get" action="{% url 'financials' %}">
-   <select name="time_frame">
-       <option value="month">Monthly</option>
-       <option value="quarter">Quarterly</option>
-       <option value="year">Yearly</option>
-   </select>
-   <button type="submit">Go</button>
+    <select class="btn btn-secondary dropdown-toggle"name="time_frame">
+        <option value="year" {% if time_frame == 'year' %}selected{% endif %}>Yearly</option>
+        <option value="quarter" {% if time_frame == 'quarter' %}selected{% endif %}>Quarterly</option>
+        <option value="month" {% if time_frame == 'month' %}selected{% endif %}>Monthly</option>
+    </select>
+    {% if time_frame == 'quarter' %}
+    <select class="btn btn-secondary dropdown-toggle"name="quarter">
+        <option value="1" {% if quarter == 1 %}selected{% endif %}>Q1</option>
+        <option value="2" {% if quarter == 2 %}selected{% endif %}>Q2</option>
+        <option value="3" {% if quarter == 3 %}selected{% endif %}>Q3</option>
+        <option value="4" {% if quarter == 4 %}selected{% endif %}>Q4</option>
+    </select>
+    {% elif time_frame == 'month' %}
+    <select class="btn btn-secondary dropdown-toggle"name="month">
+        <option value="1" {% if month == 1 %}selected{% endif %}>January</option>
+        <option value="2" {% if month == 2 %}selected{% endif %}>February</option>
+        <option value="3" {% if month == 3 %}selected{% endif %}>March</option>
+        <option value="4" {% if month == 4 %}selected{% endif %}>April</option>
+        <option value="5" {% if month == 5 %}selected{% endif %}>May</option>
+        <option value="6" {% if month == 6 %}selected{% endif %}>June</option>
+        <option value="7" {% if month == 7 %}selected{% endif %}>July</option>
+        <option value="8" {% if month == 8 %}selected{% endif %}>August</option>
+        <option value="9" {% if month == 9 %}selected{% endif %}>September</option>
+        <option value="10" {% if month == 10 %}selected{% endif %}>October</option>
+        <option value="11" {% if month == 11 %}selected{% endif %}>November</option>
+        <option value="12" {% if month == 12 %}selected{% endif %}>December</option>
+    </select>
+    {% else %}
+    <input type="number" name="year" min="1900" max="2100" value="{{ year }}">
+    {% endif %}
+    <button class="btn btn-success"type="submit">Show</button>
 </form>
+<BR>
+<p class="card-text"><strong> Total Sales Amount: </strong>Ksh {{ sales_amount }}</p>
+<p class="card-text"><strong>Revenue: </strong>Ksh {{ revenue }}</p>
+<p class="card-text"><strong>Expenses: </strong>Ksh {{ expense_total }}</p>
+<p class="card-text"><strong>Total Profit: </strong>Ksh {{ profit }}</p>
+<canvas id="profitChart"></canvas>
 
-<h2>Total Sales Amount: ${{ sales_amount }}</h2>
-<h2>Total Debt Paid: ${{ debt_paid }}</h2>
-<h2>Revenue: ${{ revenue }}</h2>
-<h2>Expenses: ${{ expense_total }}</h2>
-<h2>Total Profit: ${{ profit }}</h2>
+<script>
+    var profitLabels = JSON.parse('{{ profit_labels|safe }}');
+    var profitData = JSON.parse('{{ profit_data|safe }}');
+
+    var ctx = document.getElementById('profitChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: profitLabels,
+            datasets: [{
+                label: 'Profit',
+                data: profitData,
+                backgroundColor: 'rgba(54, 162, 235, 0.5)', // Lighter shade of blue
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
 {% endblock %}

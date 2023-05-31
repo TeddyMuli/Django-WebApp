@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="{% url 'home' %}">Django CRM</a>
+      <a class="navbar-brand" href="{% url 'home' %}">Test Limited</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -37,12 +37,23 @@
           </li>
 
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'financials' %}">Financials</a>
+            <a class="nav-link" href="{% url 'send_bulk_sms' %}">SMS</a>
           </li>
 
 
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'financials' %}">Financials</a>
+          </li>
 
-        <div>
+          <br>
+          {% if request.user.is_superuser %}
+          <li class="nav-item">
+            <a class="nav-link"  href="/admin/">Admin</a>
+          </li>
+          {% endif %}
+          <br>
+          <div>
+
           <li class="nav-item">
             <a class="btn btn-danger"  href="{% url 'logout' %}">Logout</a>
           </li>
@@ -53,7 +64,7 @@
           </li>
 
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'home' %}">Login</a>
+            <a class="nav-link" href="{% url 'login' %}">Login</a>
           </li>        
 
         {% endif %}

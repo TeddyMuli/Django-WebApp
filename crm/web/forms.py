@@ -1,22 +1,19 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Record, Sale, Debt, Route, Product, Expense
+from .models import Record, Sale, Debt, Route, Product, Expense, Message
 
 class RecordForm(forms.ModelForm):
     f_name = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"First Name", "class":"form-control"}), label="")
     l_name = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Last Name", "class":"form-control"}), label="")
     phone_no = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Phone Number", "class":"form-control"}), label="")
-    route = forms.ChoiceField(widget=forms.Select(attrs={'style': 'background-color: #f2f2f2; border: 1px solid #ccc; padding: 5px 10px;'}))
+    route = forms.ModelChoiceField(queryset=Route.objects.all(), empty_label="Route",widget=forms.Select(attrs={'style': 'background-color: #f2f2f2; border: 1px solid #ccc; padding: 5px 10px;'}))
 
     def __init__(self, *args, **kwargs):
         super(RecordForm, self).__init__(*args, **kwargs)
 
-        # Retrieve choices from another table
         choices = Route.objects.values_list('id', 'route')  # Replace 'name' with the appropriate field name from the related model
-		# Update the choices of your_field
         self.fields['route'].choices = [('', 'Route')] + list(choices)
-        # Remove the label
         self.fields['route'].label = False
     class Meta:
         model = Record
@@ -26,8 +23,8 @@ class RecordForm(forms.ModelForm):
 class SaleForm(forms.ModelForm):
     quantity = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Quantity", "class":"form-control"}), label="")
     paid = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Paid", "class":"form-control"}), label="")
-    client = forms.ChoiceField(widget=forms.Select(attrs={'style': 'background-color: #f2f2f2; border: 1px solid #ccc; padding: 5px 10px;'}))
-    product = forms.ChoiceField(widget=forms.Select(attrs={'style': 'background-color: #f2f2f2; border: 1px solid #ccc; padding: 5px 10px;'}))
+    client = forms.ModelChoiceField(queryset=Record.objects.all(), empty_label="Client",widget=forms.Select(attrs={'style': 'background-color: #f2f2f2; border: 1px solid #ccc; padding: 5px 10px;'}))
+    product = forms.ModelChoiceField(queryset=Product.objects.all(), empty_label="Product",widget=forms.Select(attrs={'style': 'background-color: #f2f2f2; border: 1px solid #ccc; padding: 5px 10px;'}))
     pay = forms.ChoiceField(widget=forms.Select(attrs={'style': 'background-color: #f2f2f2; border: 1px solid #ccc; padding: 5px 10px;'}))
     def __init__(self, *args, **kwargs):
         super(SaleForm, self).__init__(*args, **kwargs)
@@ -55,7 +52,17 @@ class DebtForm(forms.ModelForm):
     paid = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Pay Debt", "class":"form-control"}), label="")
     class Meta:
          model = Debt
-         exclude = ('client',)
+         exclude = ('client','user',)
+
+class MessageForm(forms.ModelForm):
+     message = forms.CharField(
+          required=True, 
+          widget=forms.widgets.Textarea(attrs={"placeholder":"Enter Message","class":"form-control"}), 
+          label=""
+          )
+     class Meta:
+          model = Message
+          exclude = ('user',)
 
 
 class ExpenseForm(forms.ModelForm):

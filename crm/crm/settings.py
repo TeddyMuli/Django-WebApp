@@ -16,6 +16,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
 'e534-197-156-137-146.ngrok-free.app',
 'localhost',
+'127.0.0.1',
 ]
 
 
@@ -78,7 +79,7 @@ DATABASES = {
         'HOST' : 'localhost',
         'PORT' : '3306',
         'USER' : 'root',
-        'PASSWORD' : '1618Teddy!',
+        'PASSWORD' : '******',
     }
 }
 
